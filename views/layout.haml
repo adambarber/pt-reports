@@ -3,16 +3,18 @@
   %head
     %link{:href=>'/bootstrap.min.css', :rel=>'stylesheet', :type=>'text/css'}
     %link{:href=>'/styles.css', :rel=>'stylesheet', :type=>'text/css'}
+    %script{ type: "text/javascript", href: "/bootstrap.min.js" }
     %title=@title
   %body
-    .containter
-      .navbar
-        .navbar-inner
-          %ul.nav
+    .navbar
+      .navbar-inner
+        .container
+          %a.brand Pivotal Tracker Status
+          %ul.nav.pull-right
             %li
-              %a{:href=>"/#{params[:projects]}/#{params[:api_key]}", :title=>"Show activity from #{@start_date} to now"} Last Week
+              %a{:href=>"/#{params[:projects]}/#{params[:api_key]}", :title=>"Show activity from #{@start_date} to now"} Last Week's Progress
             %li
-              %a{:href=>"/status/#{params[:projects]}/#{params[:api_key]}"} Status
+              %a{:href=>"/status/#{params[:projects]}/#{params[:api_key]}"} Project Status
     .container
       .row
         .span12

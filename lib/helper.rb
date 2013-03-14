@@ -71,3 +71,7 @@ def stories(project, api_key, filter='')
     }
     return res.body
 end
+
+def done_stories_table_header(done_stories, done_points)
+  "Recently Completed: #{done_stories.count} stories, #{done_points} points"
+end

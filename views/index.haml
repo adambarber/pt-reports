@@ -10,7 +10,7 @@
     - for stat in @top_labels
       %li
         %span= Story.human_format(stat[0])+" "+stat[1].to_s+"%"
-  %strong Wrok by Developer:
+  %strong Progress by Developer:
   %ul
     - for work in @top_owners
       %li= work.name+" "+work.story_count.to_s+" stories, "+work.points_count.to_s+" points"
