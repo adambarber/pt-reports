@@ -5,7 +5,7 @@ def type_to_img(story_type)
 end
 
 def friendly_title(story)
-	"<a href=\"#{story.url}\" target=\"_blank\" title=\"#{CGI.escapeHTML(story.description)}\">#{story.title}</a>"
+  "<a href=\"#{story.url}\" target=\"_blank\" title=\"#{story.description}\">#{story.title}</a>"
 end
 
 #Fetches this week's work - returns the body of the API response
@@ -63,7 +63,7 @@ end
 #This wraps the story search
 def stories(project, api_key, filter='')
 	req = Net::HTTP::Get.new(
-      "/services/v3/projects/#{project}/stories?filter=#{filter}", 
+      "/services/v3/projects/#{project}/stories?filter=#{filter}",
       {'X-TrackerToken'=>api_key}
     )
     res = Net::HTTP.start(@pt_uri.host, @pt_uri.port) {|http|
