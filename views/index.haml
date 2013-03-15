@@ -1,4 +1,5 @@
-%h1
+%hr
+%h2
   %span{:title=>"#{ @story_points} points"} #{@stories.count} Stories
   Live since #{@start_date.strftime('%b %d')}
   %span{:title=>"#{@created_stories} stories were created", :class=>'improved '+(@improved ? 'green' : 'red')} (#{@created_stories} created)
@@ -25,22 +26,24 @@
           .people Owner: #{@stories[sid].owned_by} | Accepted: #{@stories[sid].accepted_at.strftime("%a %m/%d")} | Requested by: #{@stories[sid].requested_by} on #{@stories[sid].created_at.strftime("%b %d")}
           - unless @stories[sid].description.nil?
             .description #{Story.auto_link_urls(CGI.escapeHTML(@stories[sid].description))}
-%h1= "#{@upcoming_stories.count} Upcoming Stories"
 %hr
-%span.state
-  %span.green
-    %strong #{@upcoming_story_counts['finished']}
-  finished = code complete, but not yet delivered.
-  %span.green
-    %strong #{@upcoming_story_counts['delivered']}
-  delivered = live, but not yet verified as fixed.
-%table.upcoming
+%h2= "#{@upcoming_stories.count} Upcoming Stories"
+%hr
+%ul
+  %li
+    %span.green
+      %strong #{@upcoming_story_counts['finished']}
+    finished = code complete, but not yet delivered.
+  %li
+    %span.green
+      %strong #{@upcoming_story_counts['delivered']}
+    delivered = live, but not yet verified as fixed.
+%table.table.upcoming
   - for story in @upcoming_stories
     %tr
       %td
-        %span.state #{story.friendly_state}
-      %td
         %img{:src=>type_to_img(story.story_type), :title=>story.story_type}
         =friendly_title(story)
+        %span.state= "(#{story.friendly_state})"
         %br
         .people Owner: #{story.owned_by} | Requested by: #{story.requested_by} on #{story.created_at.strftime("%b %d")}

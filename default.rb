@@ -17,6 +17,7 @@ before do
    @days_ago = params[:days_ago].to_i
    @days_ago = 7 if @days_ago < 1
    @start_date = Date.today-@days_ago
+   @last_month = Date.today-30
    @pt_uri = URI.parse('http://www.pivotaltracker.com/')
 end
 
@@ -92,12 +93,12 @@ get '/features/:projects/:api_key' do
       @stories[sid] = Story.new.from_xml(s)
 
       @labels << @stories[sid].labels unless @stories[sid].labels.nil?
-      @labels = @labels.uniq
+      @labels ||= @labels.uniq
     end
 
     @labels.each do |l|
       @l = @labels.map{|l| l[0]}.join(' ')
-      label_stories = Nokogiri::HTML(stories(project, params[:api_key], "label%3A#{l[0]}"))
+      label_stories = Nokogiri::HTML(stories(project, params[:api_key], "label%3A#{l[0]}%20modified_since:#{@start_date.strftime("%m/%d/%Y")}"))
       label_stories.xpath('//story').each_with_index do |ls, idx|
         sid = ls.xpath('id')[0].content
         @label_stories["#{l[0]}"][idx] = Story.new.from_xml(ls)
