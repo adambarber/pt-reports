@@ -17,6 +17,7 @@ before do
    @days_ago = params[:days_ago].to_i
    @days_ago = 7 if @days_ago < 1
    @start_date = Date.today-@days_ago
+   @two_weeks = Date.today-14
    @last_month = Date.today-30
    @pt_uri = URI.parse('http://www.pivotaltracker.com/')
 end
@@ -75,6 +76,36 @@ get '/:projects/:api_key' do
     }
 
     haml :index
+end
+
+get '/team/:projects/:api_key' do
+  @title = "Team Progress"
+  @owners = Array.new
+  @stories = Hash.new
+  @team_stories = Hash.new do |hash, key|
+    hash[key] = []
+  end
+
+  params[:projects].split(',').uniq.each do |project|
+    doc = Nokogiri::HTML(stories(project, params[:api_key]))
+
+    doc.xpath('//story').each do |s|
+      sid = s.xpath('id')[0].content
+      @stories[sid] = Story.new.from_xml(s)
+
+      @owners << @stories[sid].owned_by unless @stories[sid].owned_by.nil?
+    end
+    @owners.uniq.each do |l|
+      team_stories = Nokogiri::HTML(created_since(@two_weeks, project, params[:api_key], "owner:\"#{l.gsub(' ', '%20')}\""))
+      puts team_stories
+      team_stories.xpath('//story').each_with_index do |ls, idx|
+        @team_stories["#{l}"][idx] = Story.new.from_xml(ls)
+      end
+    end
+
+  end
+  @team_stories
+  haml :team
 end
 
 get '/features/:projects/:api_key' do

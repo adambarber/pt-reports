@@ -66,10 +66,11 @@ def stories(project, api_key, filter='')
       "/services/v3/projects/#{project}/stories?filter=#{filter}",
       {'X-TrackerToken'=>api_key}
     )
-    res = Net::HTTP.start(@pt_uri.host, @pt_uri.port) {|http|
-      http.request(req)
-    }
-    return res.body
+  res = Net::HTTP.start(@pt_uri.host, @pt_uri.port) {|http|
+    http.request(req)
+  }
+
+  return res.body
 end
 
 def done_stories_table_header(done_stories, done_points)

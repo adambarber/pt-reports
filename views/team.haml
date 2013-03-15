@@ -1,0 +1,19 @@
+- @team_stories.each do |member|
+  = member[0]
+  %table.table.table-striped
+    %thead
+      %th ID
+      %th Points Estimate
+      %th Accepted On
+      %th State
+      %th Title
+
+    %tbody
+      - member.last.each do |story|
+        %tr
+          %td= story.id
+          %td= story.estimate
+          %td= story.accepted_at.strftime("%a %m/%d") if story.accepted_at
+          %td= story.current_state
+          %td= friendly_title story
+
