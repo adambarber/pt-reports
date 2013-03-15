@@ -1,24 +1,25 @@
-%h1 Project Features
-%hr
-%table.table.table-striped
-  %thead
-    %th Tag Name
-    %th Story Count
-  %tbody
-    - @label_stories.each do |l|
-      %tr{ data: { toggle: "collapse", target: "##{l[0]}" } }
-        %td= l[0]
-        %td= l[1].count
-        %td
-          %div.collapse{ id: "#{l[0]}"}
-            %table.table.table-striped
-              %thead
-                %th State
-                %th Owner
-                %th Story Title
-              %tbody
-                - l[1].each do |story|
-                  %tr
-                    %td= story.last.current_state
-                    %td= story.last.owned_by
-                    %td= friendly_title story.last
+.span12
+  %h1 Project Features
+  %hr
+  %table.table.table-striped
+    %thead
+      %th Tag Name
+      %th Story Count
+    %tbody
+      - @label_stories.each do |l|
+        %tr{ data: { toggle: "collapse", target: "##{l[0]}" } }
+          %td= l[0]
+          %td= l[1].count
+          %td
+            %div.collapse{ id: "#{l[0]}"}
+              %table.table.table-striped
+                %thead
+                  %th State
+                  %th Owner
+                  %th Story Title
+                %tbody
+                  - l[1].each do |story|
+                    %tr
+                      %td= story.last.current_state
+                      %td= story.last.owned_by
+                      %td= friendly_title story.last

@@ -1,19 +1,37 @@
-- @team_stories.each do |member|
-  = member[0]
-  %table.table.table-striped
-    %thead
-      %th ID
-      %th Points Estimate
-      %th Accepted On
-      %th State
-      %th Title
+.span2
+  .well
+    %ul.nav.nav-list
+      %li.nav-header Team Members
+      - @team_stories.each_with_index do |member, i|
+        %li{ class: i == 0 ? 'active' : ''}
+          %a{ href: "##{member[0].gsub(' ', '')}", data: { toggle: 'tab' } }= member[0]
 
-    %tbody
-      - member.last.each do |story|
-        %tr
-          %td= story.id
-          %td= story.estimate
-          %td= story.accepted_at.strftime("%a %m/%d") if story.accepted_at
-          %td= story.current_state
-          %td= friendly_title story
+.span10
+  .tab-content
+    - @team_stories.each_with_index do |member, i|
+      %div.tab-pane{ id: "#{member[0].gsub(' ', '')}", class: i == 0 ? 'active' : '' }
+        .well
+          %ul
+            %li
+              %strong Total Points:
+              = member.last.map{|item| item.estimate.to_i }.inject(:+)
+            %li
+              %strong Total Stories:
+              = member.last.count
+        %table.table.table-striped
+          %thead
+            %th ID
+            %th Points Estimate
+            %th Accepted On
+            %th Modified
+            %th Title
+
+          %tbody
+            - member.last.each do |story|
+              %tr{ class: story.current_state == 'accepted' ? 'success' : story.current_state == 'started' ? 'info' : story.current_state == 'finished' ? 'warning' : '' }
+                %td= story.id
+                %td= story.estimate
+                %td= story.accepted_at.strftime("%a %m/%d") if story.accepted_at
+                %td= story.updated_at.strftime("%a %m/%d") if story.updated_at
+                %td= friendly_title story
 

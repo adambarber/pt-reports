@@ -1,226 +1,227 @@
-%h1 Project Status
-%br
+.span12
+  %h1 Project Status
+  %br
 
-.tabbable
-  %ul.nav.nav-tabs#tracker-tabs
-    %li.active
-      %a{ href: "#current-stories", :'data-toggle' => "tab" }
-        Current Stories
-        = "(#{@current_stories.size})"
-    %li
-      %a{ href: "#done-stories", :'data-toggle' => "tab" }
-        Last Week
-        = "(#{@done_stories.size})"
-    %li
-      %a{ href: "#backlog-stories", :'data-toggle' => "tab" }
-        Upcoming Stories
-        = "(#{@backlog_stories.count})"
-
-    %li
-      %a{ href: "#icebox-stories", :'data-toggle' => "tab" }
-        Icebox Stories
-        = "(#{@icebox.count})"
-
-  .tab-content
-    .tab-pane#done-stories.fade
-      // Done Stories
-      %h2
-        %small
-          Stories Finished Last Week
-          = "(#{@done_stories.count} stories | #{@done_points} points)"
-      %table.table.table-striped
-        %thead
-          %th Completed
-          %th Owner
-          %th Points
-          %th Story
-        %tbody
-          -for story in @done_stories.sort{|a,b| a.owned_by <=> b.owned_by}
-            %tr
-              %td #{story.accepted_at.strftime("%b %d")}
-              %td.owner #{story.owned_by}
-              %td #{story.estimate}
-              %td
-                %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-                #{friendly_title(story)}
-
-    .tab-pane#current-stories.active
-      // Current Stories
-      %h2
-        %small
+  .tabbable
+    %ul.nav.nav-tabs#tracker-tabs
+      %li.active
+        %a{ href: "#current-stories", :'data-toggle' => "tab" }
           Current Stories
-          = "(#{@current_stories.count} stories | #{@current_points} points)"
-      %table.table
-        %thead
-          %th State
-          %th Owner
-          %th Points
-          %th Story
-        %tbody
-          - for story in @current_stories.sort{|a,b| Story.status_sort(a,b)}
-            / %pre= story.to_yaml
-            %tr{ class: story.current_state == 'accepted' ? 'success' : story.current_state == 'started' ? 'info' : story.current_state == 'finished' ? 'warning' : '' }
-              %td= story.current_state.capitalize
-              %td #{story.owned_by}
-              %td #{story.estimate}
-              %td
-                %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-                #{friendly_title(story)}
+          = "(#{@current_stories.size})"
+      %li
+        %a{ href: "#done-stories", :'data-toggle' => "tab" }
+          Last Week
+          = "(#{@done_stories.size})"
+      %li
+        %a{ href: "#backlog-stories", :'data-toggle' => "tab" }
+          Upcoming Stories
+          = "(#{@backlog_stories.count})"
 
-    .tab-pane#backlog-stories.fade
-      // Backlog Stories
-      %h2
-        %small
-          Backlog Stories
-          = "(#{@backlog_stories.count} stories | #{@backlog_points} points)"
-      %table.table
-        %thead
-          %th Complete
-          %th Owner
-          %th Points
-          %th Story
-        %tbody
-          - for story in @backlog_stories
+      %li
+        %a{ href: "#icebox-stories", :'data-toggle' => "tab" }
+          Icebox Stories
+          = "(#{@icebox.count})"
 
-            %tr
-              %td #{story.estimated_date.strftime("%b %d")}
-              %td #{story.owned_by}
-              %td #{story.estimate}
-              %td
-                %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-                #{friendly_title(story)}
+    .tab-content
+      .tab-pane#done-stories.fade
+        // Done Stories
+        %h2
+          %small
+            Stories Finished Last Week
+            = "(#{@done_stories.count} stories | #{@done_points} points)"
+        %table.table.table-striped
+          %thead
+            %th Completed
+            %th Owner
+            %th Points
+            %th Story
+          %tbody
+            -for story in @done_stories.sort{|a,b| a.owned_by <=> b.owned_by}
+              %tr
+                %td #{story.accepted_at.strftime("%b %d")}
+                %td.owner #{story.owned_by}
+                %td #{story.estimate}
+                %td
+                  %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+                  #{friendly_title(story)}
 
-    .tab-pane#icebox-stories.fade
-      // Backlog Stories
-      %h2
-        %small Backlog Stories
-      %table.table
-        %thead
-          %th Complete
-          %th Owner
-          %th Requester
-          %th Points
-          %th Story
-        %tbody
-          - for story in @icebox
-            / %pre= story.to_yaml
-            %tr
-              %td #{story.created_at.strftime("%b %d")}
-              %td #{story.owned_by}
-              %td #{story.requested_by}
-              %td #{story.estimate}
-              %td
-                %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-                #{friendly_title(story)}
-/
-/ - for owner in @recently_delivered_by_owner.keys
-/   %table.table.table-striped
-/     %thead
-/       %tr= owner
-/     - for owner in @recently_delivered_by_owner.keys
-/       %tr
-/         %td
-/           =owner
-/         %td
-/           %ul
-/             -for story in @recently_delivered_by_owner[owner]
-/               %li
-/                 =friendly_title(story)
-/   %tr
-/     %td{:colspan=>4}
-/       %h2 Current: #{@current_stories.count} stories, #{@current_points} points
-/       %span.subtitle
-/         - for label in Story.top_labels(@current_stories)
-/           %span
-/             =Story.human_format(label[0])
-/             %strong
-/               =label[1].to_s+"%"
-/   %tr
-/     %th Status
-/     %th Owner
-/     %th Points
-/     %th
-/   - for story in @current_stories.sort{|a,b| Story.status_sort(a,b)}
-/     %tr
-/       %td.state #{story.friendly_state}
-/       %td.owner #{story.owned_by}
-/       %td #{story.estimate}
-/       %td
-/         %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-/         #{friendly_title(story)}
-/   - if @next_up_stories.count > 0
-/     %tr
-/       %td{:colspan=>4}
-/         %h2 Coming Soon: #{@next_up_stories.count} stories, #{@next_points} points
-/     %tr
-/       %th Complete
-/       %th Owner
-/       %th Points
-/       %th
-/     - for story in @next_up_stories
-/       %tr
-/         %td #{story.estimated_date.strftime("%b %d")}
-/         %td #{story.owned_by}
-/         %td #{story.estimate}
-/         %td
-/           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-/           #{friendly_title(story)}
-/   - if @backlog_stories.count > 0
-/     %tr
-/       %td{:colspan=>4}
-/         %h2 Backlog: on the schedule
-/         %span.subtitle
-/           - for label in Story.top_labels(@backlog_stories)
-/             %span
-/               =Story.human_format(label[0])
-/               %strong
-/                 =label[1].to_s+"%"
-/     %tr
-/       %th Complete
-/       %th Owner
-/       %th Points
-/       %th
-/     - for story in @backlog_stories
-/       %tr
-/         %td
-/           %span{:title=>"Estimated 'code complete'"} #{story.estimated_date.strftime("%b %d")}
-/         %td.owner #{story.owned_by}
-/         %td #{story.estimate}
-/         %td
-/           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-/           #{friendly_title(story)}
-/   -else
-/     %tr
-/       %td{:colspan=>4}
-/         %br
-/         %b
-/           Note:
-/         the backlog (stories scheduled beyond this iteration) is not included in this report. Please login to
-/         %a{:href=>'http://pivotaltracker.com'} Pivotal Tracker
-/         to see it.
-/   - if @icebox.count > 0
-/     %tr
-/       %td{:colspan=>4}
-/         %h2 Icebox: not yet scheduled
-/     %trcol
-/       %th
-/       %th Owner
-/       %th Points
-/       %th
-/     - for story in @icebox
-/       %tr
-/         %td
-/         %td #{story.owned_by}
-/         %td #{story.estimate}
-/         %td
-/           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
-/           #{friendly_title(story)}
-/     %br
-/
-/ %h2 Recently Logged: #{@recently_logged_stories.count} stories
-/ These stories were logged within the last #{@days_ago} days, and may need to be prioritized
-/ %ul.unstyled
-/   - for story in @recently_logged_stories.sort{|a,b| a.created_at <=> b.created_at}
-/     %li
-/       %img{:src=>type_to_img(story.story_type), :title=>story.story_type}
-/       #{story.requested_by} on #{story.created_at.strftime("%b %d")}: #{friendly_title(story)}
+      .tab-pane#current-stories.active
+        // Current Stories
+        %h2
+          %small
+            Current Stories
+            = "(#{@current_stories.count} stories | #{@current_points} points)"
+        %table.table
+          %thead
+            %th State
+            %th Owner
+            %th Points
+            %th Story
+          %tbody
+            - for story in @current_stories.sort{|a,b| Story.status_sort(a,b)}
+              / %pre= story.to_yaml
+              %tr{ class: story.current_state == 'accepted' ? 'success' : story.current_state == 'started' ? 'info' : story.current_state == 'finished' ? 'warning' : '' }
+                %td= story.current_state.capitalize
+                %td #{story.owned_by}
+                %td #{story.estimate}
+                %td
+                  %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+                  #{friendly_title(story)}
+
+      .tab-pane#backlog-stories.fade
+        // Backlog Stories
+        %h2
+          %small
+            Backlog Stories
+            = "(#{@backlog_stories.count} stories | #{@backlog_points} points)"
+        %table.table
+          %thead
+            %th Complete
+            %th Owner
+            %th Points
+            %th Story
+          %tbody
+            - for story in @backlog_stories
+
+              %tr
+                %td #{story.estimated_date.strftime("%b %d")}
+                %td #{story.owned_by}
+                %td #{story.estimate}
+                %td
+                  %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+                  #{friendly_title(story)}
+
+      .tab-pane#icebox-stories.fade
+        // Backlog Stories
+        %h2
+          %small Backlog Stories
+        %table.table
+          %thead
+            %th Complete
+            %th Owner
+            %th Requester
+            %th Points
+            %th Story
+          %tbody
+            - for story in @icebox
+              / %pre= story.to_yaml
+              %tr
+                %td #{story.created_at.strftime("%b %d")}
+                %td #{story.owned_by}
+                %td #{story.requested_by}
+                %td #{story.estimate}
+                %td
+                  %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+                  #{friendly_title(story)}
+  /
+  / - for owner in @recently_delivered_by_owner.keys
+  /   %table.table.table-striped
+  /     %thead
+  /       %tr= owner
+  /     - for owner in @recently_delivered_by_owner.keys
+  /       %tr
+  /         %td
+  /           =owner
+  /         %td
+  /           %ul
+  /             -for story in @recently_delivered_by_owner[owner]
+  /               %li
+  /                 =friendly_title(story)
+  /   %tr
+  /     %td{:colspan=>4}
+  /       %h2 Current: #{@current_stories.count} stories, #{@current_points} points
+  /       %span.subtitle
+  /         - for label in Story.top_labels(@current_stories)
+  /           %span
+  /             =Story.human_format(label[0])
+  /             %strong
+  /               =label[1].to_s+"%"
+  /   %tr
+  /     %th Status
+  /     %th Owner
+  /     %th Points
+  /     %th
+  /   - for story in @current_stories.sort{|a,b| Story.status_sort(a,b)}
+  /     %tr
+  /       %td.state #{story.friendly_state}
+  /       %td.owner #{story.owned_by}
+  /       %td #{story.estimate}
+  /       %td
+  /         %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+  /         #{friendly_title(story)}
+  /   - if @next_up_stories.count > 0
+  /     %tr
+  /       %td{:colspan=>4}
+  /         %h2 Coming Soon: #{@next_up_stories.count} stories, #{@next_points} points
+  /     %tr
+  /       %th Complete
+  /       %th Owner
+  /       %th Points
+  /       %th
+  /     - for story in @next_up_stories
+  /       %tr
+  /         %td #{story.estimated_date.strftime("%b %d")}
+  /         %td #{story.owned_by}
+  /         %td #{story.estimate}
+  /         %td
+  /           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+  /           #{friendly_title(story)}
+  /   - if @backlog_stories.count > 0
+  /     %tr
+  /       %td{:colspan=>4}
+  /         %h2 Backlog: on the schedule
+  /         %span.subtitle
+  /           - for label in Story.top_labels(@backlog_stories)
+  /             %span
+  /               =Story.human_format(label[0])
+  /               %strong
+  /                 =label[1].to_s+"%"
+  /     %tr
+  /       %th Complete
+  /       %th Owner
+  /       %th Points
+  /       %th
+  /     - for story in @backlog_stories
+  /       %tr
+  /         %td
+  /           %span{:title=>"Estimated 'code complete'"} #{story.estimated_date.strftime("%b %d")}
+  /         %td.owner #{story.owned_by}
+  /         %td #{story.estimate}
+  /         %td
+  /           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+  /           #{friendly_title(story)}
+  /   -else
+  /     %tr
+  /       %td{:colspan=>4}
+  /         %br
+  /         %b
+  /           Note:
+  /         the backlog (stories scheduled beyond this iteration) is not included in this report. Please login to
+  /         %a{:href=>'http://pivotaltracker.com'} Pivotal Tracker
+  /         to see it.
+  /   - if @icebox.count > 0
+  /     %tr
+  /       %td{:colspan=>4}
+  /         %h2 Icebox: not yet scheduled
+  /     %trcol
+  /       %th
+  /       %th Owner
+  /       %th Points
+  /       %th
+  /     - for story in @icebox
+  /       %tr
+  /         %td
+  /         %td #{story.owned_by}
+  /         %td #{story.estimate}
+  /         %td
+  /           %span{:title=>"last updated: #{story.updated_at.strftime("%b %d")}"}
+  /           #{friendly_title(story)}
+  /     %br
+  /
+  / %h2 Recently Logged: #{@recently_logged_stories.count} stories
+  / These stories were logged within the last #{@days_ago} days, and may need to be prioritized
+  / %ul.unstyled
+  /   - for story in @recently_logged_stories.sort{|a,b| a.created_at <=> b.created_at}
+  /     %li
+  /       %img{:src=>type_to_img(story.story_type), :title=>story.story_type}
+  /       #{story.requested_by} on #{story.created_at.strftime("%b %d")}: #{friendly_title(story)}

@@ -1,49 +1,50 @@
-%hr
-%h2
-  %span{:title=>"#{ @story_points} points"} #{@stories.count} Stories
-  Live since #{@start_date.strftime('%b %d')}
-  %span{:title=>"#{@created_stories} stories were created", :class=>'improved '+(@improved ? 'green' : 'red')} (#{@created_stories} created)
-%hr
+.span12
+  %hr
+  %h2
+    %span{:title=>"#{ @story_points} points"} #{@stories.count} Stories
+    Live since #{@start_date.strftime('%b %d')}
+    %span{:title=>"#{@created_stories} stories were created", :class=>'improved '+(@improved ? 'green' : 'red')} (#{@created_stories} created)
+  %hr
 
-#summary
-  %strong Top Labels:
+  #summary
+    %strong Top Labels:
+    %ul
+      - for stat in @top_labels
+        %li
+          %span= Story.human_format(stat[0])+" "+stat[1].to_s+"%"
+    %strong Progress by Developer:
+    %ul
+      - for work in @top_owners
+        %li= work.name+" "+work.story_count.to_s+" stories, "+work.points_count.to_s+" points"
+  - for label in @labels.keys.sort
+    .label
+      %h2= Story.human_format(label)
+      .stories
+        - for sid in @labels[label]
+          .story
+            %img{:src=>type_to_img(@stories[sid].story_type), :title=>@stories[sid].story_type}
+            =friendly_title(@stories[sid])
+            .people Owner: #{@stories[sid].owned_by} | Accepted: #{@stories[sid].accepted_at.strftime("%a %m/%d")} | Requested by: #{@stories[sid].requested_by} on #{@stories[sid].created_at.strftime("%b %d")}
+            - unless @stories[sid].description.nil?
+              .description #{Story.auto_link_urls(CGI.escapeHTML(@stories[sid].description))}
+  %hr
+  %h2= "#{@upcoming_stories.count} Upcoming Stories"
+  %hr
   %ul
-    - for stat in @top_labels
-      %li
-        %span= Story.human_format(stat[0])+" "+stat[1].to_s+"%"
-  %strong Progress by Developer:
-  %ul
-    - for work in @top_owners
-      %li= work.name+" "+work.story_count.to_s+" stories, "+work.points_count.to_s+" points"
-- for label in @labels.keys.sort
-  .label
-    %h2= Story.human_format(label)
-    .stories
-      - for sid in @labels[label]
-        .story
-          %img{:src=>type_to_img(@stories[sid].story_type), :title=>@stories[sid].story_type}
-          =friendly_title(@stories[sid])
-          .people Owner: #{@stories[sid].owned_by} | Accepted: #{@stories[sid].accepted_at.strftime("%a %m/%d")} | Requested by: #{@stories[sid].requested_by} on #{@stories[sid].created_at.strftime("%b %d")}
-          - unless @stories[sid].description.nil?
-            .description #{Story.auto_link_urls(CGI.escapeHTML(@stories[sid].description))}
-%hr
-%h2= "#{@upcoming_stories.count} Upcoming Stories"
-%hr
-%ul
-  %li
-    %span.green
-      %strong #{@upcoming_story_counts['finished']}
-    finished = code complete, but not yet delivered.
-  %li
-    %span.green
-      %strong #{@upcoming_story_counts['delivered']}
-    delivered = live, but not yet verified as fixed.
-%table.table.upcoming
-  - for story in @upcoming_stories
-    %tr
-      %td
-        %img{:src=>type_to_img(story.story_type), :title=>story.story_type}
-        =friendly_title(story)
-        %span.state= "(#{story.friendly_state})"
-        %br
-        .people Owner: #{story.owned_by} | Requested by: #{story.requested_by} on #{story.created_at.strftime("%b %d")}
+    %li
+      %span.green
+        %strong #{@upcoming_story_counts['finished']}
+      finished = code complete, but not yet delivered.
+    %li
+      %span.green
+        %strong #{@upcoming_story_counts['delivered']}
+      delivered = live, but not yet verified as fixed.
+  %table.table.upcoming
+    - for story in @upcoming_stories
+      %tr
+        %td
+          %img{:src=>type_to_img(story.story_type), :title=>story.story_type}
+          =friendly_title(story)
+          %span.state= "(#{story.friendly_state})"
+          %br
+          .people Owner: #{story.owned_by} | Requested by: #{story.requested_by} on #{story.created_at.strftime("%b %d")}

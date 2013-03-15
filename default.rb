@@ -96,8 +96,7 @@ get '/team/:projects/:api_key' do
       @owners << @stories[sid].owned_by unless @stories[sid].owned_by.nil?
     end
     @owners.uniq.each do |l|
-      team_stories = Nokogiri::HTML(created_since(@two_weeks, project, params[:api_key], "owner:\"#{l.gsub(' ', '%20')}\""))
-      puts team_stories
+      team_stories = Nokogiri::HTML(created_since(@start_date, project, params[:api_key], "owner:\"#{l.gsub(' ', '%20')}\""))
       team_stories.xpath('//story').each_with_index do |ls, idx|
         @team_stories["#{l}"][idx] = Story.new.from_xml(ls)
       end
