@@ -1,9 +1,11 @@
 !!! 5
 %html
   %head
+    %script{src: "/jquery.js"}
+    %script{src: "/bootstrap.js" }
+
     %link{:href=>'/bootstrap.min.css', :rel=>'stylesheet', :type=>'text/css'}
     %link{:href=>'/styles.css', :rel=>'stylesheet', :type=>'text/css'}
-    %script{ type: "text/javascript", href: "/bootstrap.min.js" }
     %title=@title
   %body
     .navbar
@@ -15,7 +17,10 @@
               %a{:href=>"/#{params[:projects]}/#{params[:api_key]}", :title=>"Show activity from #{@start_date} to now"} Last Week's Progress
             %li
               %a{:href=>"/status/#{params[:projects]}/#{params[:api_key]}"} Project Status
+            %li
+              %a{:href=>"/features/#{params[:projects]}/#{params[:api_key]}"} Features
     .container
       .row
         .span12
           =yield
+

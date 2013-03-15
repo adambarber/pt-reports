@@ -76,6 +76,40 @@ get '/:projects/:api_key' do
     haml :index
 end
 
+get '/features/:projects/:api_key' do
+  @title = 'All Features'
+  @labels = Array.new
+  @stories = Hash.new
+  @label_stories = Hash.new do |hash, key|
+    hash[key] = {}
+  end
+
+  params[:projects].split(',').uniq.each do |project|
+    doc = Nokogiri::HTML(stories(project, params[:api_key]))
+
+    doc.xpath('//story').each do |s|
+      sid = s.xpath('id')[0].content
+      @stories[sid] = Story.new.from_xml(s)
+
+      @labels << @stories[sid].labels unless @stories[sid].labels.nil?
+      @labels = @labels.uniq
+    end
+
+    @labels.each do |l|
+      @l = @labels.map{|l| l[0]}.join(' ')
+      label_stories = Nokogiri::HTML(stories(project, params[:api_key], "label%3A#{l[0]}"))
+      label_stories.xpath('//story').each_with_index do |ls, idx|
+        sid = ls.xpath('id')[0].content
+        @label_stories["#{l[0]}"][idx] = Story.new.from_xml(ls)
+      end
+    end
+
+  end
+
+  @label_stories
+  haml :features
+end
+
 get '/status/:projects/:api_key' do
 
   include_icebox = (params[:icebox] != 'false')
